@@ -39,4 +39,29 @@
 <div class="bx"><div class="by"><span class="spin">&#128522;</span></div></div>
 <div class="mj"><span>&#128378;</span></div>
 <script>
-  var msgs=["Compiling LaTeX...","Running 2,384 regressio
+  var msgs=["Compiling LaTeX...",
+            "Running 2,384 regressions...",
+            "Clustering standard errors...",
+            "Testing parallel trends...",
+            "Colouring footnotes red...",
+            "Being scared of my supervisors...",
+            "Hanging out on X...",
+            "Waiting for supervisor comments...",
+            "Re-reading Bellemare and Fenske..."];
+  var i=0;
+  setInterval(function(){
+    i=(i+1)%msgs.length;
+    document.getElementById("status").textContent=msgs[i];
+  },2500);
+  var t=document.title;
+  window.addEventListener("blur",function(){document.title="Come back \uD83D\uDE22";});
+  window.addEventListener("focus",function(){document.title=t;});
+  document.addEventListener("click",function(e){
+    var s=document.createElement("span");
+    s.className="pop";s.textContent="\uD83D\uDE0A";
+    s.style.left=(e.clientX-12)+"px";s.style.top=(e.clientY-12)+"px";
+    document.body.appendChild(s);setTimeout(function(){s.remove();},1000);
+  });
+</script>
+</body>
+</html>
