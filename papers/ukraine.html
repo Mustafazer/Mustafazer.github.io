@@ -7,20 +7,36 @@
   body{display:flex;min-height:100vh;margin:0;align-items:center;justify-content:center;
        font-family:Georgia,serif;background:#fafafa;color:#333;overflow:hidden}
   .box{text-align:center;position:relative;z-index:2}
-  h1{font-size:1.6rem;font-weight:normal}
+  h1{font-size:1.6rem;font-weight:normal;margin-bottom:.4rem}
+  .status{font-style:italic;color:#777;min-height:1.4em;margin:.6rem 0 .5rem}
+  .bar{width:280px;height:10px;border:1px solid #bbb;border-radius:6px;margin:0 auto;overflow:hidden;background:#fff}
+  .fill{height:100%;width:0;background:#7aa97a;animation:fill 6s ease-out forwards}
+  .pct{font-size:.85rem;color:#999;margin-top:.35rem}
+  @keyframes fill{to{width:99%}}
   .bx{position:fixed;left:0;top:0;z-index:1;animation:x 7s linear infinite alternate;pointer-events:none}
   .by{font-size:6rem;display:inline-block;animation:y 5.3s linear infinite alternate}
   .spin{display:inline-block;animation:wob 2s ease-in-out infinite}
   @keyframes x{from{transform:translateX(0)}to{transform:translateX(calc(100vw - 7.5rem))}}
   @keyframes y{from{transform:translateY(0)}to{transform:translateY(calc(100vh - 7.5rem))}}
   @keyframes wob{0%,100%{transform:rotate(-15deg)}50%{transform:rotate(15deg)}}
+  .mj{position:fixed;bottom:8px;left:0;z-index:1;font-size:4rem;pointer-events:none;
+      animation:moon 9s linear infinite}
+  .mj span{display:inline-block;animation:lean .8s ease-in-out infinite alternate}
+  @keyframes moon{from{transform:translateX(-15vw)}to{transform:translateX(110vw)}}
+  @keyframes lean{from{transform:scaleX(-1) rotate(-8deg)}to{transform:scaleX(-1) rotate(5deg)}}
+  .pop{position:fixed;z-index:3;font-size:1.6rem;pointer-events:none;animation:pop 1s ease-out forwards}
+  @keyframes pop{from{transform:translateY(0) scale(1);opacity:1}to{transform:translateY(-70px) scale(1.6);opacity:0}}
 </style>
 </head>
 <body>
 <div class="box">
   <h1>Sorry, not ready yet</h1>
   <p>The latest version of the paper will appear here soon.</p>
+  <div class="status" id="status">Compiling LaTeX...</div>
+  <div class="bar"><div class="fill"></div></div>
+  <div class="pct">99% complete. It has been 99% for a while.</div>
 </div>
 <div class="bx"><div class="by"><span class="spin">&#128522;</span></div></div>
-</body>
-</html>
+<div class="mj"><span>&#128378;</span></div>
+<script>
+  var msgs=["Compiling LaTeX...","Running 2,384 regressio
