@@ -131,7 +131,7 @@
   .birds{opacity:0}
   body[data-theme="light"] .scene[data-weather="clear"] .birds,
   body[data-theme="light"] .scene[data-weather="cloudy"] .birds{opacity:.85; animation:birdfly 38s linear infinite}
-  @keyframes birdfly{from{transform:translate(-220px,18px)} to{transform:translate(1680px,-38px)}}
+  @keyframes birdfly{from{transform:translate(-220px,128px)} to{transform:translate(1680px,86px)}}
   .bird{transform-box:fill-box; transform-origin:center; animation:flap .5s ease-in-out infinite}
   .bird.b2{animation-duration:.62s; animation-delay:.12s}
   .bird.b3{animation-duration:.46s; animation-delay:.26s}
@@ -723,13 +723,7 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
     var plane = document.querySelector('.plane');
     if(!plane) return;
     function fly(){
-      var bodyY = (window.skyPos && window.skyPos.y) ? window.skyPos.y : 999;
-      var y;
-      if(Math.random() < 0.3 && bodyY < 460){
-        y = bodyY;                       // now and then, line up to pass in front of the sun/moon
-      } else {
-        y = 150 + Math.random() * 140;   // otherwise cruise high (planes don't fly low)
-      }
+      var y = 240 + Math.random() * 60;  // cruise just above the "Mustafa Özer" name
       var startX = 1600, endX = -200, dur = 14000, t0 = null;
       function step(ts){
         if(t0 === null) t0 = ts;
