@@ -311,6 +311,7 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
     <rect class="sky sky-day" x="0" y="0" width="1440" height="900" fill="url(#daySky)" opacity="0"/>
     <rect class="sky sky-night" x="0" y="0" width="1440" height="900" fill="url(#nightSky)" opacity="1"/>
     <rect class="sky sky-twi" x="0" y="0" width="1440" height="900" fill="url(#twiSky)" opacity="0"/>
+    <rect class="sky sky-weather" x="0" y="0" width="1440" height="900" fill="#8a98ad" opacity="0"/>
     <g class="stars" fill="#ffffff">
       <circle class="star" cx="90" cy="80" r="2"/><circle class="star" cx="180" cy="160" r="1.5"/>
       <circle class="star" cx="260" cy="60" r="2.2"/><circle class="star" cx="340" cy="200" r="1.6"/>
@@ -631,13 +632,18 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
     var d = dayness(t, sr, ss);
     var twi = Math.max(bump(t, sr, 0.85), bump(t, ss, 0.85)); // rosy glow peaks at sunrise/sunset
     var sc = document.querySelector('.scene');
-    var clearW = (sc && sc.getAttribute('data-weather') === 'clear') ? 1 : 0.35; // muted when cloudy/rain/snow
+    var w = sc ? sc.getAttribute('data-weather') : 'clear';
+    var clear = (w === 'clear');
+    var dim = clear ? 1 : 0.55;                  // sun/moon/stars dimmed under cloud, rain or snow
     setOp('.sky-day', d);
     setOp('.sky-night', 1 - d);
-    setOp('.sky-twi', twi * clearW);
-    setOp('.stars', 1 - d);
-    setOp('.sun', d);
-    setOp('.moon', 1 - d);
+    setOp('.sky-twi', twi * (clear ? 1 : 0.3));  // rosy dawn/dusk muted when overcast
+    setOp('.stars', (1 - d) * dim);
+    setOp('.sun', d * dim);
+    setOp('.moon', (1 - d) * dim);
+    var tint = clear ? null : ({cloudy:['#8a98ad',0.34], rain:['#59647a',0.48], snow:['#c4cedd',0.36]})[w];
+    var swe = document.querySelector('.sky-weather');
+    if(swe){ if(tint){ swe.setAttribute('fill', tint[0]); swe.style.opacity = String(tint[1]); } else swe.style.opacity = '0'; }
     document.body.setAttribute('data-theme', d >= 0.5 ? 'light' : 'dark');
     var fSun = clamp((t - sr) / ((ss - sr) || 1), 0, 1);
     var nightLen = (24 - ss) + sr; if(nightLen <= 0) nightLen = 24;
