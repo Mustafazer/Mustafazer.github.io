@@ -266,8 +266,8 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
         <stop offset="1" stop-color="#ffce6b" stop-opacity="0"/>
       </radialGradient>
       <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0" stop-color="#ccd8ff" stop-opacity="0.5"/>
-        <stop offset="1" stop-color="#ccd8ff" stop-opacity="0"/>
+        <stop offset="0" stop-color="#cfe0ff" stop-opacity="0.65"/>
+        <stop offset="1" stop-color="#cfe0ff" stop-opacity="0"/>
       </radialGradient>
     </defs>
     <rect class="sky sky-day" x="0" y="0" width="1440" height="900" fill="url(#daySky)"/>
@@ -289,7 +289,7 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
     </g>
     <g class="moon-pos">
       <g class="moon">
-        <circle cx="1180" cy="200" r="170" fill="url(#moonGlow)"/>
+        <circle cx="1180" cy="200" r="250" fill="url(#moonGlow)"/>
         <circle cx="1180" cy="200" r="52" fill="#cdd6ee"/>
         <circle cx="1158" cy="182" r="12" fill="#d4ddf4" opacity="0.7"/>
         <circle cx="1200" cy="216" r="9" fill="#d4ddf4" opacity="0.6"/>
@@ -298,7 +298,7 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
     </g>
     <g class="sun-pos">
       <g class="sun">
-        <circle cx="720" cy="720" r="320" fill="url(#sunGlow)"/>
+        <circle cx="720" cy="720" r="380" fill="url(#sunGlow)"/>
         <circle cx="720" cy="720" r="120" fill="#ffd25e"/>
       </g>
     </g>
@@ -473,7 +473,7 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
     var day = (h >= 7 && h < 19);
     document.body.setAttribute('data-theme', day ? 'light' : 'dark');
     var frac = day ? (h - 7)/12 : ((h >= 19 ? h - 19 : h + 5)/12);
-    var leftX = 180, rightX = 1260, horizonY = 770, peakY = 170;
+    var leftX = 180, rightX = 1260, horizonY = 860, peakY = 420;
     var x = leftX + frac*(rightX - leftX);
     var y = horizonY - (horizonY - peakY)*Math.sin(Math.PI*frac);
     var sun = document.querySelector('.sun-pos'), moon = document.querySelector('.moon-pos');
