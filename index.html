@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mustafa Özer — Economist</title>
+<meta name="description" content="Mustafa Özer — PhD Candidate in Economics at Newcastle University. Applied microeconomics: migration, crime, and the labour market.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b1020; --bg2:#0e1428; --surface:#131a2e; --surface2:#172040;
+    --text:#e7eaf3; --muted:#9aa6bf; --border:rgba(255,255,255,.08);
+    --a1:#6366f1; --a2:#22d3ee; --accent:#7c8cff;
+    --shadow:0 18px 40px -20px rgba(0,0,0,.7);
+    --maxw:980px;
+  }
+  [data-theme="light"]{
+    --bg:#f6f8fc; --bg2:#eef2f9; --surface:#ffffff; --surface2:#f1f4fb;
+    --text:#121a2e; --muted:#586079; --border:rgba(15,23,42,.10);
+    --accent:#4754d6; --shadow:0 18px 40px -24px rgba(20,30,60,.35);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  /* ambient glow */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(60% 50% at 15% 0%, rgba(99,102,241,.18), transparent 60%),
+      radial-gradient(55% 45% at 100% 10%, rgba(34,211,238,.14), transparent 60%),
+      linear-gradient(180deg,var(--bg),var(--bg2));
+  }
+  a{color:inherit; text-decoration:none}
+  h1,h2,h3{font-family:'Space Grotesk','Inter',sans-serif; line-height:1.15; margin:0}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 22px}
+  .grad{
+    background:linear-gradient(90deg,var(--a1),var(--a2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+
+  /* NAV */
+  nav{
+    position:sticky; top:0; z-index:50;
+    backdrop-filter:saturate(150%) blur(12px);
+    background:color-mix(in srgb, var(--bg) 72%, transparent);
+    border-bottom:1px solid var(--border);
+  }
+  .nav{display:flex; align-items:center; justify-content:space-between; height:62px}
+  .brand{font-family:'Space Grotesk'; font-weight:700; letter-spacing:.3px}
+  .nav-links{display:flex; gap:22px; align-items:center}
+  .nav-links a{color:var(--muted); font-size:.92rem; font-weight:500; transition:color .2s}
+  .nav-links a:hover{color:var(--text)}
+  .toggle{
+    cursor:pointer; border:1px solid var(--border); background:var(--surface);
+    color:var(--text); width:38px; height:38px; border-radius:10px; font-size:1rem;
+    display:grid; place-items:center; transition:transform .2s, background .2s;
+  }
+  .toggle:hover{transform:translateY(-2px)}
+  @media(max-width:640px){ .nav-links a:not(.toggle-wrap){display:none} }
+
+  /* HERO */
+  header.hero{padding:84px 0 56px}
+  .eyebrow{
+    display:inline-block; font-size:.8rem; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--accent); font-weight:600; margin-bottom:18px;
+    border:1px solid var(--border); padding:6px 12px; border-radius:999px; background:var(--surface);
+  }
+  .hero h1{font-size:clamp(2.4rem,6vw,4rem); font-weight:700; margin-bottom:14px}
+  .hero .role{font-size:clamp(1.05rem,2.4vw,1.35rem); color:var(--text); font-weight:600}
+  .hero .tag{color:var(--muted); max-width:600px; margin-top:14px; font-size:1.02rem}
+  .cta{display:flex; flex-wrap:wrap; gap:12px; margin-top:30px}
+  .btn{
+    display:inline-flex; align-items:center; gap:9px; padding:11px 18px; border-radius:12px;
+    font-weight:600; font-size:.94rem; border:1px solid var(--border); transition:transform .18s, box-shadow .18s, background .2s;
+  }
+  .btn svg{width:17px; height:17px}
+  .btn.primary{background:linear-gradient(90deg,var(--a1),var(--a2)); color:#0b1020; border:none}
+  .btn.ghost{background:var(--surface); color:var(--text)}
+  .btn:hover{transform:translateY(-3px); box-shadow:var(--shadow)}
+
+  /* SECTIONS */
+  section{padding:46px 0; border-top:1px solid var(--border)}
+  .kicker{font-size:.82rem; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); font-weight:600}
+  h2.title{font-size:clamp(1.5rem,3.5vw,2.1rem); margin:10px 0 26px; font-weight:700}
+  p.lead{color:var(--muted); max-width:720px}
+
+  .chips{display:flex; flex-wrap:wrap; gap:10px; margin-top:6px}
+  .chip{
+    padding:8px 14px; border-radius:999px; background:var(--surface); border:1px solid var(--border);
+    font-size:.9rem; color:var(--text); transition:transform .18s, border-color .2s;
+  }
+  .chip:hover{transform:translateY(-2px); border-color:var(--accent)}
+
+  .cards{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:6px}
+  @media(max-width:720px){ .cards{grid-template-columns:1fr} }
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px;
+    transition:transform .2s, box-shadow .2s, border-color .2s; position:relative; overflow:hidden;
+  }
+  .card::after{content:""; position:absolute; inset:0; border-radius:16px; padding:1px;
+    background:linear-gradient(120deg,transparent,rgba(124,140,255,.5),transparent);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude; opacity:0; transition:opacity .25s;}
+  .card:hover{transform:translateY(-5px); box-shadow:var(--shadow)}
+  .card:hover::after{opacity:1}
+  .card .badge{font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:600}
+  .card h3{font-size:1.12rem; margin:10px 0 8px}
+  .card p{color:var(--muted); font-size:.95rem; margin:0}
+
+  /* timeline */
+  .timeline{margin-top:6px; border-left:2px solid var(--border); padding-left:22px}
+  .tl{position:relative; padding-bottom:24px}
+  .tl:last-child{padding-bottom:0}
+  .tl::before{content:""; position:absolute; left:-29px; top:4px; width:12px; height:12px; border-radius:50%;
+    background:linear-gradient(90deg,var(--a1),var(--a2))}
+  .tl .when{font-size:.82rem; color:var(--accent); font-weight:600}
+  .tl h3{font-size:1.05rem; margin:4px 0 2px}
+  .tl span.where{color:var(--muted); font-size:.92rem}
+
+  .pub{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px}
+  .pub p{margin:0; color:var(--text)}
+  .pub em{color:var(--muted)}
+
+  /* contact */
+  .links{display:flex; flex-wrap:wrap; gap:12px; margin-top:8px}
+  footer{padding:34px 0; color:var(--muted); font-size:.85rem; text-align:center; border-top:1px solid var(--border)}
+
+  /* reveal */
+  .reveal{opacity:0; transform:translateY(20px); transition:opacity .6s ease, transform .6s ease}
+  .reveal.in{opacity:1; transform:none}
+</style>
+</head>
+<body data-theme="dark">
+
+<nav>
+  <div class="wrap nav">
+    <a class="brand" href="#top">MÖ</a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#research">Research</a>
+      <a href="#education">Education</a>
+      <a href="#contact">Contact</a>
+      <button class="toggle" id="themeBtn" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero wrap" id="top">
+  <span class="eyebrow reveal">Economist · Newcastle University</span>
+  <h1 class="reveal">Mustafa <span class="grad">Özer</span></h1>
+  <div class="role reveal">PhD Candidate in Economics, Newcastle University Business School</div>
+  <p class="tag reveal">Applied microeconomist working on the economics of migration, crime, and the labour market — causal inference with large administrative and survey data.</p>
+  <div class="cta reveal">
+    <a class="btn primary" href="mailto:M.Ozer2@newcastle.ac.uk">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+      Email
+    </a>
+    <!-- Add cv.pdf to the repo to enable this button -->
+    <a class="btn ghost" href="cv.pdf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="m7 12 5 5 5-5"/><path d="M5 21h14"/></svg>
+      Download CV
+    </a>
+    <a class="btn ghost" href="https://github.com/Mustafazer" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 6.84 9.5c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.1-1.47-1.1-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.9-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 22 12 10 10 0 0 0 12 2Z"/></svg>
+      GitHub
+    </a>
+    <!-- When ready, copy a button above and point href to your Google Scholar / LinkedIn -->
+  </div>
+</header>
+
+<main>
+  <section id="about" class="wrap">
+    <div class="kicker reveal">About</div>
+    <h2 class="title reveal">Empirical economics, real-world questions</h2>
+    <p class="lead reveal">I am a PhD candidate in Economics at Newcastle University Business School (since September 2024), supervised by
+      <a class="grad" href="https://nilsbraakmann.github.io/nils-site/" target="_blank" rel="noopener">Nils Braakmann</a> and
+      <a class="grad" href="https://sites.google.com/view/harrypickard/home" target="_blank" rel="noopener">Harry Pickard</a>.
+      My research applies microeconometric methods to questions in migration, crime, and labour economics. I am based in Newcastle upon Tyne, United Kingdom, and work in Turkish (native), English, and German.</p>
+  </section>
+
+  <section id="research" class="wrap">
+    <div class="kicker reveal">Research</div>
+    <h2 class="title reveal">Interests &amp; work in progress</h2>
+    <div class="chips reveal">
+      <span class="chip">Economics of Migration</span>
+      <span class="chip">Economics of Crime</span>
+      <span class="chip">Labour Economics</span>
+      <span class="chip">Applied Microeconometrics</span>
+      <span class="chip">Forced Migration &amp; Integration</span>
+    </div>
+    <div class="cards" style="margin-top:24px">
+      <article class="card reveal">
+        <div class="badge">Work in progress</div>
+        <h3>Refugee Inflows and Hate Crime</h3>
+        <p>Evidence from England and Wales — a difference-in-differences study of how local refugee arrivals affect recorded hate crime.</p>
+      </article>
+      <article class="card reveal">
+        <div class="badge">Work in progress</div>
+        <h3>Forced Migration, Mental Health &amp; the Labour Market</h3>
+        <p>Linking refugees' mental health to labour-market integration using the German Socio-Economic Panel (SOEP).</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="education" class="wrap">
+    <div class="kicker reveal">Education</div>
+    <h2 class="title reveal">Academic background</h2>
+    <div class="timeline">
+      <div class="tl reveal">
+        <div class="when">2024 — present</div>
+        <h3>PhD in Economics</h3>
+        <span class="where">Newcastle University Business School, United Kingdom</span>
+      </div>
+      <div class="tl reveal">
+        <div class="when">2017 — 2020</div>
+        <h3>MSc in Economics</h3>
+        <span class="where">Istanbul Technical University, Turkey</span>
+      </div>
+      <div class="tl reveal">
+        <div class="when">2012 — 2016</div>
+        <h3>BA in Economics</h3>
+        <span class="where">Gazi University, Ankara, Turkey</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="publications" class="wrap">
+    <div class="kicker reveal">Publications</div>
+    <h2 class="title reveal">Translations</h2>
+    <div class="pub reveal">
+      <p>Islahi, Abdul A. <em>Contributions of Muslim Scholars to Economic Thought and Analysis.</em>
+      Translated into Turkish (with F. F. Akosman) as <em>Müslümanların İktisadi Analize ve Düşünceye Katkıları</em>,
+      K. Yıldırım (Ed.), İktisat Yayınları, Ankara. ISBN 605-6701-06-1.</p>
+    </div>
+  </section>
+
+  <section id="contact" class="wrap">
+    <div class="kicker reveal">Contact</div>
+    <h2 class="title reveal">Let's get in touch</h2>
+    <p class="lead reveal">Happy to talk about research, data, or collaboration.</p>
+    <div class="links reveal">
+      <a class="btn primary" href="mailto:M.Ozer2@newcastle.ac.uk">M.Ozer2@newcastle.ac.uk</a>
+      <a class="btn ghost" href="https://github.com/Mustafazer" target="_blank" rel="noopener">github.com/Mustafazer</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  © <span id="year"></span> Mustafa Özer · Built with HTML &amp; CSS · Hosted on GitHub Pages
+</footer>
+
+<script>
+  // year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // theme toggle (persisted)
+  const root = document.body, btn = document.getElementById('themeBtn');
+  const saved = localStorage.getItem('theme');
+  if(saved){ root.setAttribute('data-theme', saved); }
+  const sync = () => btn.textContent = root.getAttribute('data-theme') === 'light' ? '☀️' : '🌙';
+  sync();
+  btn.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next); localStorage.setItem('theme', next); sync();
+  });
+
+  // reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.12});
+  document.querySelectorAll('.reveal').forEach((el,i) => {
+    el.style.transitionDelay = (i % 6) * 60 + 'ms';
+    io.observe(el);
+  });
+</script>
+</body>
+</html>
