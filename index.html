@@ -142,12 +142,7 @@
   /* mountain goats graze by day; wildcat chase scatters them */
   .goats{opacity:0; fill:#2b3a55}
   [data-theme="light"] .goats{opacity:1}
-  .goat{transition:transform 2.4s ease-in, opacity 1.8s ease}
-  .goats.fleeing .goat{opacity:0}
-  .goats.fleeing .goat1{transform:translate(150px,-44px)}
-  .goats.fleeing .goat2{transform:translate(135px,-30px); transition-delay:.12s}
-  .goats.fleeing .goat3{transform:translate(175px,-50px); transition-delay:.05s}
-  .goats.fleeing .goat4{transform:translate(120px,-26px); transition-delay:.2s}
+  .goat{will-change:transform,opacity}
   .goat-head{transform-box:fill-box; transform-origin:left bottom; animation:graze 3.2s ease-in-out infinite}
   .goat2 .goat-head{animation-duration:3.8s; animation-delay:.6s}
   .goat3 .goat-head{animation-duration:2.8s; animation-delay:1.1s}
@@ -695,24 +690,51 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
   (function wildlife(){
     var goats = document.querySelector('.goats'), cat = document.querySelector('.wildcat');
     if(!goats || !cat) return;
-    function runCat(){
+    function runCat(dir){
       cat.style.opacity = '1';
-      var startX = -260, endX = 1660, dur = 9000, t0 = null;
+      var startX = dir > 0 ? -260 : 1660, endX = dir > 0 ? 1660 : -260, dur = 9000, t0 = null, s = dir > 0 ? 1 : -1;
       function step(ts){
         if(t0 === null) t0 = ts;
         var p = (ts - t0) / dur; if(p > 1) p = 1;
         var x = startX + (endX - startX) * p;
-        var y = 648 - 14 * Math.abs(Math.sin(p * Math.PI * 9));
-        cat.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ')');
+        var y = 702 - 14 * Math.abs(Math.sin(p * Math.PI * 9));
+        cat.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ') scale(' + s + ',1)');
         if(p < 1) requestAnimationFrame(step); else cat.style.opacity = '0';
       }
       requestAnimationFrame(step);
     }
+    var goatEls = goats.querySelectorAll('.goat'), goatX = [500, 640, 900, 1200];
+    function animGoat(g, fx, fy, tx, ty, dur, bob, accel, face){
+      var t0 = null;
+      function step(ts){
+        if(t0 === null) t0 = ts;
+        var p = (ts - t0) / dur; if(p > 1) p = 1;
+        var e = accel ? p*p : 1 - (1-p)*(1-p);          // accelerate away, decelerate back
+        var x = fx + (tx - fx) * e;
+        var y = fy + (ty - fy) * e - bob * Math.abs(Math.sin(p * Math.PI * 5)); // galloping bob
+        g.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px) scaleX(' + face + ')';
+        if(p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    var dir = 1; // +1: cat from left, goats flee right; -1: mirror. Alternates each chase.
     function chase(){
       if(document.body.getAttribute('data-theme') !== 'light') return; // daytime only
-      goats.classList.add('fleeing');
-      runCat();
-      setTimeout(function(){ goats.classList.remove('fleeing'); }, 11000); // come back to graze
+      goats.classList.add('fleeing'); // pause the grazing head-bob while they run
+      var d = dir; dir = -dir;                           // alternate: one from the right, one from the left
+      runCat(d);
+      var cs = d > 0 ? -260 : 1660, ce = d > 0 ? 1660 : -260;
+      goatEls.forEach(function(g, i){
+        var pr = (goatX[i] - cs) / (ce - cs);
+        var at = Math.max(700, pr * 9000 - 1300);        // bolt ~1.3s before the cat reaches it
+        setTimeout(function(){ animGoat(g, 0, 0, d * 800, 70, 2400, 9, true, d); }, at);
+      });
+      setTimeout(function(){                              // trot back from the same edge, facing home
+        goatEls.forEach(function(g, i){
+          setTimeout(function(){ animGoat(g, d * 800, 70, 0, 0, 2300, 8, false, -d); }, i * 260);
+        });
+      }, 10200);
+      setTimeout(function(){ goats.classList.remove('fleeing'); }, 15000);
     }
     window.chaseNow = chase; // manual trigger for testing in the browser console
     var fired = false;
