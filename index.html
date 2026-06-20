@@ -151,11 +151,7 @@
   @keyframes graze{0%,55%,100%{transform:rotate(0)} 25%,45%{transform:rotate(34deg)}}
   .wildcat{opacity:0; fill:#1f2a40}
   @media (prefers-reduced-motion: reduce){ .cloud,.drop,.flake,.meteor,.bird,.birds,.plane .navlight,.goat-head{animation:none} }
-  [data-theme="light"] .sky-night,[data-theme="light"] .moon,[data-theme="light"] .stars{opacity:0}
-  [data-theme="light"] .sky-day,[data-theme="light"] .sun{opacity:1}
   [data-theme="light"] .mtn-a{fill:#9fb4d8} [data-theme="light"] .mtn-b{fill:#7e98c6}
-  [data-theme="dark"] .sky-day,[data-theme="dark"] .sun{opacity:0}
-  [data-theme="dark"] .sky-night,[data-theme="dark"] .moon,[data-theme="dark"] .stars{opacity:1}
   [data-theme="dark"] .mtn-a{fill:#0d1430} [data-theme="dark"] .mtn-b{fill:#070b18}
   @media (prefers-reduced-motion: reduce){ .scene .sun,.scene .moon,.scene .star{animation:none} }
   a{color:inherit; text-decoration:none}
@@ -304,9 +300,17 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
         <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
         <stop offset="1" stop-color="#ffffff" stop-opacity="0.95"/>
       </linearGradient>
+      <linearGradient id="twiSky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2b3a6b"/>
+        <stop offset="0.38" stop-color="#7d5a9c"/>
+        <stop offset="0.62" stop-color="#cf7f8e"/>
+        <stop offset="0.82" stop-color="#f2a268"/>
+        <stop offset="1" stop-color="#ffd49a"/>
+      </linearGradient>
     </defs>
-    <rect class="sky sky-day" x="0" y="0" width="1440" height="900" fill="url(#daySky)"/>
-    <rect class="sky sky-night" x="0" y="0" width="1440" height="900" fill="url(#nightSky)"/>
+    <rect class="sky sky-day" x="0" y="0" width="1440" height="900" fill="url(#daySky)" opacity="0"/>
+    <rect class="sky sky-night" x="0" y="0" width="1440" height="900" fill="url(#nightSky)" opacity="1"/>
+    <rect class="sky sky-twi" x="0" y="0" width="1440" height="900" fill="url(#twiSky)" opacity="0"/>
     <g class="stars" fill="#ffffff">
       <circle class="star" cx="90" cy="80" r="2"/><circle class="star" cx="180" cy="160" r="1.5"/>
       <circle class="star" cx="260" cy="60" r="2.2"/><circle class="star" cx="340" cy="200" r="1.6"/>
@@ -333,7 +337,7 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
       </g>
     </g>
     <g class="moon-pos">
-      <g class="moon">
+      <g class="moon" opacity="1">
         <circle cx="1180" cy="200" r="250" fill="url(#moonGlow)"/>
         <circle cx="1180" cy="200" r="52" fill="#cdd6ee"/>
         <circle cx="1158" cy="182" r="12" fill="#d4ddf4" opacity="0.7"/>
@@ -342,7 +346,7 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
       </g>
     </g>
     <g class="sun-pos">
-      <g class="sun">
+      <g class="sun" opacity="0">
         <circle cx="720" cy="720" r="380" fill="url(#sunGlow)"/>
         <circle cx="720" cy="720" r="120" fill="#ffd25e"/>
       </g>
@@ -599,20 +603,51 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
   // year
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  // sun & moon follow the clock: positioned along a sky arc by time of day; theme flips at 07:00 / 19:00
+  // sun rises / moon sets at Newcastle's real sunrise & sunset, with dawn/dusk cross-fades
+  var sunTimes = {rise: 7, set: 19}; // updated from Open-Meteo; fallback 07:00/19:00
+  function nclHours(){               // current time in Newcastle (Europe/London), regardless of device tz
+    try{
+      var s = new Date().toLocaleString('en-GB', {timeZone:'Europe/London', hour:'2-digit', minute:'2-digit', hour12:false});
+      var p = s.split(':'); return (parseInt(p[0],10) % 24) + parseInt(p[1],10)/60;
+    }catch(e){ var n = new Date(); return n.getHours() + n.getMinutes()/60; }
+  }
+  function clamp(v,a,b){ return v < a ? a : (v > b ? b : v); }
+  function bump(t,c,T){ var x = Math.abs(t-c); return x >= T ? 0 : 1 - x/T; }
+  function dayness(t,sr,ss){          // 0 = full night, 1 = full day, ramps across sunrise/sunset
+    var T = 0.6;
+    if(t <= sr - T) return 0;
+    if(t < sr + T)  return (t - (sr - T)) / (2*T);
+    if(t <= ss - T) return 1;
+    if(t < ss + T)  return 1 - (t - (ss - T)) / (2*T);
+    return 0;
+  }
+  function arc(frac){
+    var leftX=180, rightX=1260, horizonY=860, peakY=420;
+    return {x: leftX + frac*(rightX-leftX), y: horizonY - (horizonY-peakY)*Math.sin(Math.PI*frac)};
+  }
+  function setOp(sel,v){ var el = document.querySelector(sel); if(el) el.style.opacity = v.toFixed(3); }
   function placeSky(){
-    var now = new Date();
-    var h = now.getHours() + now.getMinutes()/60;
-    var day = (h >= 7 && h < 19);
-    document.body.setAttribute('data-theme', day ? 'light' : 'dark');
-    var frac = day ? (h - 7)/12 : ((h >= 19 ? h - 19 : h + 5)/12);
-    var leftX = 180, rightX = 1260, horizonY = 860, peakY = 420;
-    var x = leftX + frac*(rightX - leftX);
-    var y = horizonY - (horizonY - peakY)*Math.sin(Math.PI*frac);
-    var sun = document.querySelector('.sun-pos'), moon = document.querySelector('.moon-pos');
-    if(sun)  sun.setAttribute('transform', 'translate(' + (x-720).toFixed(1) + ',' + (y-720).toFixed(1) + ')');
-    if(moon) moon.setAttribute('transform', 'translate(' + (x-1180).toFixed(1) + ',' + (y-200).toFixed(1) + ')');
-    window.skyPos = {x:x, y:y};
+    var t = nclHours(), sr = sunTimes.rise, ss = sunTimes.set;
+    var d = dayness(t, sr, ss);
+    var twi = Math.max(bump(t, sr, 0.85), bump(t, ss, 0.85)); // rosy glow peaks at sunrise/sunset
+    var sc = document.querySelector('.scene');
+    var clearW = (sc && sc.getAttribute('data-weather') === 'clear') ? 1 : 0.35; // muted when cloudy/rain/snow
+    setOp('.sky-day', d);
+    setOp('.sky-night', 1 - d);
+    setOp('.sky-twi', twi * clearW);
+    setOp('.stars', 1 - d);
+    setOp('.sun', d);
+    setOp('.moon', 1 - d);
+    document.body.setAttribute('data-theme', d >= 0.5 ? 'light' : 'dark');
+    var fSun = clamp((t - sr) / ((ss - sr) || 1), 0, 1);
+    var nightLen = (24 - ss) + sr; if(nightLen <= 0) nightLen = 24;
+    var tn = t >= ss ? (t - ss) : (t + (24 - ss));
+    var fMoon = clamp(tn / nightLen, 0, 1);
+    var ps = arc(fSun), pm = arc(fMoon);
+    var sunEl = document.querySelector('.sun-pos'), moonEl = document.querySelector('.moon-pos');
+    if(sunEl)  sunEl.setAttribute('transform', 'translate(' + (ps.x-720).toFixed(1) + ',' + (ps.y-720).toFixed(1) + ')');
+    if(moonEl) moonEl.setAttribute('transform', 'translate(' + (pm.x-1180).toFixed(1) + ',' + (pm.y-200).toFixed(1) + ')');
+    window.skyPos = d >= 0.5 ? ps : pm; // the plane crosses in front of whichever is up
   }
   placeSky();
   setInterval(placeSky, 60000);
@@ -628,10 +663,18 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
       if([51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99].indexOf(c) >= 0) return 'rain';
       return 'cloudy';
     }
+    function hhmm(iso){ var tt = (iso || '').split('T')[1] || ''; var p = tt.split(':'); return p.length >= 2 ? parseInt(p[0],10) + parseInt(p[1],10)/60 : null; }
     function update(){
-      fetch('https://api.open-meteo.com/v1/forecast?latitude=54.9783&longitude=-1.6178&current=weather_code&timezone=Europe%2FLondon')
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=54.9783&longitude=-1.6178&current=weather_code&daily=sunrise,sunset&timezone=Europe%2FLondon')
         .then(function(r){ return r.json(); })
-        .then(function(d){ if(d && d.current) scene.setAttribute('data-weather', classify(d.current.weather_code)); })
+        .then(function(d){
+          if(d && d.current) scene.setAttribute('data-weather', classify(d.current.weather_code));
+          if(d && d.daily && d.daily.sunrise && d.daily.sunset){
+            var r = hhmm(d.daily.sunrise[0]), s = hhmm(d.daily.sunset[0]);
+            if(r != null && s != null){ sunTimes.rise = r; sunTimes.set = s; }
+          }
+          placeSky();
+        })
         .catch(function(){});
     }
     update();
@@ -668,13 +711,19 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
     var plane = document.querySelector('.plane');
     if(!plane) return;
     function fly(){
-      var y = (window.skyPos && window.skyPos.y) ? window.skyPos.y : 420;
+      var bodyY = (window.skyPos && window.skyPos.y) ? window.skyPos.y : 999;
+      var y;
+      if(Math.random() < 0.3 && bodyY < 460){
+        y = bodyY;                       // now and then, line up to pass in front of the sun/moon
+      } else {
+        y = 150 + Math.random() * 140;   // otherwise cruise high (planes don't fly low)
+      }
       var startX = 1600, endX = -200, dur = 14000, t0 = null;
       function step(ts){
         if(t0 === null) t0 = ts;
         var p = (ts - t0) / dur; if(p > 1) p = 1;
         var x = startX + (endX - startX) * p;
-        plane.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + (y - 28 * p).toFixed(1) + ')');
+        plane.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + (y - 26 * p).toFixed(1) + ')');
         if(p < 1) requestAnimationFrame(step);
       }
       requestAnimationFrame(step);
