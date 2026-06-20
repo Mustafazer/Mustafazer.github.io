@@ -131,7 +131,7 @@
   .birds{opacity:0}
   body[data-theme="light"] .scene[data-weather="clear"] .birds,
   body[data-theme="light"] .scene[data-weather="cloudy"] .birds{opacity:.85; animation:birdfly 38s linear infinite}
-  @keyframes birdfly{from{transform:translate(-220px,128px)} to{transform:translate(1680px,86px)}}
+  @keyframes birdfly{from{transform:translate(-220px,300px)} to{transform:translate(1680px,272px)}}
   .bird{transform-box:fill-box; transform-origin:center; animation:flap .5s ease-in-out infinite}
   .bird.b2{animation-duration:.62s; animation-delay:.12s}
   .bird.b3{animation-duration:.46s; animation-delay:.26s}
@@ -723,7 +723,7 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
     var plane = document.querySelector('.plane');
     if(!plane) return;
     function fly(){
-      var y = 240 + Math.random() * 60;  // cruise just above the "Mustafa Özer" name
+      var y = 458 + Math.random() * 40;  // cross between the name and the subtitle
       var startX = 1600, endX = -200, dur = 14000, t0 = null;
       function step(ts){
         if(t0 === null) t0 = ts;
