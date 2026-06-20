@@ -121,7 +121,41 @@
   .flake:nth-child(3n){animation-duration:5s; animation-delay:-2s}
   .flake:nth-child(4n){animation-delay:-3.5s}
   @keyframes snowfall{from{transform:translateY(-40px)} to{transform:translateY(960px)}}
-  @media (prefers-reduced-motion: reduce){ .cloud,.drop,.flake{animation:none} }
+  /* meteors (night) · birds (sunny day) · aircraft */
+  .meteors{opacity:0}
+  [data-theme="dark"] .meteors{opacity:1}
+  .meteor{opacity:0}
+  .meteor1{animation:shoot 16s ease-in 5s infinite}
+  .meteor2{animation:shoot 21s ease-in 13s infinite}
+  @keyframes shoot{0%{transform:translate(0,0);opacity:0} 2%{opacity:1} 9%{transform:translate(360px,150px);opacity:1} 12%{opacity:0} 100%{transform:translate(360px,150px);opacity:0}}
+  .birds{opacity:0}
+  body[data-theme="light"] .scene[data-weather="clear"] .birds{opacity:.85; animation:birdfly 38s linear infinite}
+  @keyframes birdfly{from{transform:translate(-220px,18px)} to{transform:translate(1680px,-38px)}}
+  .bird{transform-box:fill-box; transform-origin:center; animation:flap .5s ease-in-out infinite}
+  .bird.b2{animation-duration:.62s; animation-delay:.12s}
+  .bird.b3{animation-duration:.46s; animation-delay:.26s}
+  .bird.b4{animation-duration:.55s; animation-delay:.34s}
+  @keyframes flap{0%,100%{transform:scaleY(1)} 50%{transform:scaleY(.45)}}
+  .plane{fill:#0a0f1c; opacity:.92}
+  .plane .navlight{fill:#ff5a5a; animation:blink 1.4s steps(1) infinite}
+  @keyframes blink{0%,49%{opacity:1} 50%,100%{opacity:0}}
+  /* mountain goats graze by day; wildcat chase scatters them */
+  .goats{opacity:0; fill:#2b3a55}
+  [data-theme="light"] .goats{opacity:1}
+  .goat{transition:transform 2.4s ease-in, opacity 1.8s ease}
+  .goats.fleeing .goat{opacity:0}
+  .goats.fleeing .goat1{transform:translate(150px,-44px)}
+  .goats.fleeing .goat2{transform:translate(135px,-30px); transition-delay:.12s}
+  .goats.fleeing .goat3{transform:translate(175px,-50px); transition-delay:.05s}
+  .goats.fleeing .goat4{transform:translate(120px,-26px); transition-delay:.2s}
+  .goat-head{transform-box:fill-box; transform-origin:left bottom; animation:graze 3.2s ease-in-out infinite}
+  .goat2 .goat-head{animation-duration:3.8s; animation-delay:.6s}
+  .goat3 .goat-head{animation-duration:2.8s; animation-delay:1.1s}
+  .goat4 .goat-head{animation-duration:3.5s; animation-delay:.3s}
+  .goats.fleeing .goat-head{animation-play-state:paused}
+  @keyframes graze{0%,55%,100%{transform:rotate(0)} 25%,45%{transform:rotate(34deg)}}
+  .wildcat{opacity:0; fill:#1f2a40}
+  @media (prefers-reduced-motion: reduce){ .cloud,.drop,.flake,.meteor,.bird,.birds,.plane .navlight,.goat-head{animation:none} }
   [data-theme="light"] .sky-night,[data-theme="light"] .moon,[data-theme="light"] .stars{opacity:0}
   [data-theme="light"] .sky-day,[data-theme="light"] .sun{opacity:1}
   [data-theme="light"] .mtn-a{fill:#9fb4d8} [data-theme="light"] .mtn-b{fill:#7e98c6}
@@ -271,6 +305,10 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
         <stop offset="0" stop-color="#cfe0ff" stop-opacity="0.65"/>
         <stop offset="1" stop-color="#cfe0ff" stop-opacity="0"/>
       </radialGradient>
+      <linearGradient id="meteorTrail">
+        <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+        <stop offset="1" stop-color="#ffffff" stop-opacity="0.95"/>
+      </linearGradient>
     </defs>
     <rect class="sky sky-day" x="0" y="0" width="1440" height="900" fill="url(#daySky)"/>
     <rect class="sky sky-night" x="0" y="0" width="1440" height="900" fill="url(#nightSky)"/>
@@ -288,6 +326,16 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
       <circle class="star" cx="560" cy="260" r="1.4"/><circle class="star" cx="860" cy="300" r="1.7"/>
       <circle class="star" cx="1010" cy="330" r="1.5"/><circle class="star" cx="1280" cy="330" r="1.6"/>
       <circle class="star" cx="120" cy="420" r="1.5"/><circle class="star" cx="720" cy="360" r="1.6"/>
+    </g>
+    <g class="meteors">
+      <g class="meteor meteor1">
+        <line x1="300" y1="80" x2="232" y2="56" stroke="url(#meteorTrail)" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="300" cy="80" r="2.4" fill="#ffffff"/>
+      </g>
+      <g class="meteor meteor2">
+        <line x1="980" y1="60" x2="912" y2="36" stroke="url(#meteorTrail)" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="980" cy="60" r="2.4" fill="#ffffff"/>
+      </g>
     </g>
     <g class="moon-pos">
       <g class="moon">
@@ -324,9 +372,84 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
         <ellipse cx="146" cy="130" rx="72" ry="22"/>
       </g>
     </g>
+    <g class="birds" fill="none" stroke="#33405e" stroke-width="2.2" stroke-linecap="round">
+      <path class="bird b1" d="M60,180 q7,-9 14,0 q7,-9 14,0"/>
+      <path class="bird b2" d="M104,166 q6,-8 12,0 q6,-8 12,0"/>
+      <path class="bird b3" d="M150,184 q5,-7 10,0 q5,-7 10,0"/>
+      <path class="bird b4" d="M120,200 q6,-8 12,0 q6,-8 12,0"/>
+    </g>
     <g>
       <polygon class="mtn mtn-a" points="-200,900 380,500 900,900"/>
       <polygon class="mtn mtn-b" points="560,900 1080,540 1640,900"/>
+    </g>
+    <g class="goats">
+      <g class="goat-pos" transform="translate(500,592) scale(1.4)">
+        <g class="goat goat1">
+          <rect x="-6" y="-8" width="1.6" height="8.5"/>
+          <rect x="-2.5" y="-8" width="1.6" height="8.5"/>
+          <rect x="3" y="-8" width="1.6" height="8.5"/>
+          <rect x="6" y="-8" width="1.6" height="8.5"/>
+          <ellipse cx="0.5" cy="-11.5" rx="9" ry="4.8"/>
+          <polygon points="-9,-13 -12.5,-16 -10,-12"/>
+          <g class="goat-head">
+            <path d="M7.5,-12 L10,-20 L13.5,-20 L12.5,-12 Z"/>
+            <path d="M13.2,-20 q5,-1.5 2.6,-7 q-0.3,4 -4,5 Z"/>
+          </g>
+        </g>
+      </g>
+      <g class="goat-pos" transform="translate(640,690) scale(1.4)">
+        <g class="goat goat2">
+          <rect x="-6" y="-8" width="1.6" height="8.5"/>
+          <rect x="-2.5" y="-8" width="1.6" height="8.5"/>
+          <rect x="3" y="-8" width="1.6" height="8.5"/>
+          <rect x="6" y="-8" width="1.6" height="8.5"/>
+          <ellipse cx="0.5" cy="-11.5" rx="9" ry="4.8"/>
+          <polygon points="-9,-13 -12.5,-16 -10,-12"/>
+          <g class="goat-head">
+            <path d="M7.5,-12 L10,-20 L13.5,-20 L12.5,-12 Z"/>
+            <path d="M13.2,-20 q5,-1.5 2.6,-7 q-0.3,4 -4,5 Z"/>
+          </g>
+        </g>
+      </g>
+      <g class="goat-pos" transform="translate(900,666) scale(1.4)">
+        <g class="goat goat3">
+          <rect x="-6" y="-8" width="1.6" height="8.5"/>
+          <rect x="-2.5" y="-8" width="1.6" height="8.5"/>
+          <rect x="3" y="-8" width="1.6" height="8.5"/>
+          <rect x="6" y="-8" width="1.6" height="8.5"/>
+          <ellipse cx="0.5" cy="-11.5" rx="9" ry="4.8"/>
+          <polygon points="-9,-13 -12.5,-16 -10,-12"/>
+          <g class="goat-head">
+            <path d="M7.5,-12 L10,-20 L13.5,-20 L12.5,-12 Z"/>
+            <path d="M13.2,-20 q5,-1.5 2.6,-7 q-0.3,4 -4,5 Z"/>
+          </g>
+        </g>
+      </g>
+      <g class="goat-pos" transform="translate(1200,617) scale(1.4)">
+        <g class="goat goat4">
+          <rect x="-6" y="-8" width="1.6" height="8.5"/>
+          <rect x="-2.5" y="-8" width="1.6" height="8.5"/>
+          <rect x="3" y="-8" width="1.6" height="8.5"/>
+          <rect x="6" y="-8" width="1.6" height="8.5"/>
+          <ellipse cx="0.5" cy="-11.5" rx="9" ry="4.8"/>
+          <polygon points="-9,-13 -12.5,-16 -10,-12"/>
+          <g class="goat-head">
+            <path d="M7.5,-12 L10,-20 L13.5,-20 L12.5,-12 Z"/>
+            <path d="M13.2,-20 q5,-1.5 2.6,-7 q-0.3,4 -4,5 Z"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g class="wildcat" transform="translate(-300,650)">
+      <path d="M-16,-6 q-9,-1 -11,-8 q5,4 10,3 Z"/>
+      <ellipse cx="0" cy="-7" rx="14" ry="5"/>
+      <polygon points="-8,-4 -11,0 -9,0 -6,-4"/>
+      <polygon points="-5,-4 -7,0 -5,0 -3,-4"/>
+      <polygon points="6,-4 4,0 6,0 8,-4"/>
+      <polygon points="9,-4 11,0 13,0 11,-4"/>
+      <path d="M11,-9 L18,-12 L20.5,-9 L15,-6 Z"/>
+      <polygon points="15.5,-12 16.5,-15.5 18,-12"/>
+      <polygon points="18,-12 19,-15.5 20.5,-12"/>
     </g>
     <g class="rain" stroke="#bcd2ff" stroke-width="2" stroke-linecap="round">
       <line class="drop" x1="90"   y1="0" x2="80"   y2="24"/>
@@ -358,6 +481,19 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
       <circle class="flake" cx="1290" cy="0" r="2.6"/>
       <circle class="flake" cx="1400" cy="0" r="3"/>
       <circle class="flake" cx="60"   cy="0" r="2.4"/>
+    </g>
+    <g class="plane" transform="translate(1700,420)">
+      <!-- Airbus A320 top-view silhouette; flipped so the nose faces left (flies right-to-left) -->
+      <g transform="scale(-1,1)">
+        <path d="M36,0 C30,-3 18,-4 4,-4 L-26,-3 C-31,-2.4 -33,-1.2 -34,0 C-33,1.2 -31,2.4 -26,3 L4,4 C18,4 30,3 36,0 Z"/>
+        <polygon points="8,3 -8,22 -15,22 -4,3"/>
+        <polygon points="8,-3 -8,-22 -15,-22 -4,-3"/>
+        <ellipse cx="3" cy="12" rx="5" ry="2.6"/>
+        <ellipse cx="3" cy="-12" rx="5" ry="2.6"/>
+        <polygon points="-22,2 -31,10 -35,10 -28,2"/>
+        <polygon points="-22,-2 -31,-10 -35,-10 -28,-2"/>
+        <circle class="navlight" cx="-11" cy="22" r="1.7"/>
+      </g>
     </g>
   </svg>
 </div>
@@ -481,6 +617,7 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
     var sun = document.querySelector('.sun-pos'), moon = document.querySelector('.moon-pos');
     if(sun)  sun.setAttribute('transform', 'translate(' + (x-720).toFixed(1) + ',' + (y-720).toFixed(1) + ')');
     if(moon) moon.setAttribute('transform', 'translate(' + (x-1180).toFixed(1) + ',' + (y-200).toFixed(1) + ')');
+    window.skyPos = {x:x, y:y};
   }
   placeSky();
   setInterval(placeSky, 60000);
@@ -529,6 +666,64 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
     }
     tick();
     setInterval(tick, 5000);
+  })();
+
+  // an aircraft crosses in front of the sun / moon now and then
+  (function planes(){
+    var plane = document.querySelector('.plane');
+    if(!plane) return;
+    function fly(){
+      var y = (window.skyPos && window.skyPos.y) ? window.skyPos.y : 420;
+      var startX = 1600, endX = -200, dur = 14000, t0 = null;
+      function step(ts){
+        if(t0 === null) t0 = ts;
+        var p = (ts - t0) / dur; if(p > 1) p = 1;
+        var x = startX + (endX - startX) * p;
+        plane.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + (y - 28 * p).toFixed(1) + ')');
+        if(p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    function loop(){
+      setTimeout(function(){ fly(); loop(); }, 20000 + Math.random() * 28000);
+    }
+    setTimeout(fly, 7000);
+    loop();
+  })();
+
+  // mountain goats graze by day; every 4 hours a wildcat chases them off, then they return
+  (function wildlife(){
+    var goats = document.querySelector('.goats'), cat = document.querySelector('.wildcat');
+    if(!goats || !cat) return;
+    function runCat(){
+      cat.style.opacity = '1';
+      var startX = -260, endX = 1660, dur = 9000, t0 = null;
+      function step(ts){
+        if(t0 === null) t0 = ts;
+        var p = (ts - t0) / dur; if(p > 1) p = 1;
+        var x = startX + (endX - startX) * p;
+        var y = 648 - 14 * Math.abs(Math.sin(p * Math.PI * 9));
+        cat.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ')');
+        if(p < 1) requestAnimationFrame(step); else cat.style.opacity = '0';
+      }
+      requestAnimationFrame(step);
+    }
+    function chase(){
+      if(document.body.getAttribute('data-theme') !== 'light') return; // daytime only
+      goats.classList.add('fleeing');
+      runCat();
+      setTimeout(function(){ goats.classList.remove('fleeing'); }, 11000); // come back to graze
+    }
+    window.chaseNow = chase; // manual trigger for testing in the browser console
+    var fired = false;
+    function check(){
+      var d = new Date();
+      if(d.getHours() % 4 === 0 && d.getMinutes() === 0){
+        if(!fired){ fired = true; chase(); }
+      } else { fired = false; }
+    }
+    check();
+    setInterval(check, 20000);
   })();
 
   // reveal on scroll
