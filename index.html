@@ -343,11 +343,8 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
     </g>
     <g class="moon-pos">
       <g class="moon" opacity="1">
-        <circle cx="1180" cy="200" r="250" fill="url(#moonGlow)"/>
-        <circle cx="1180" cy="200" r="52" fill="#cdd6ee"/>
-        <circle cx="1158" cy="182" r="12" fill="#d4ddf4" opacity="0.7"/>
-        <circle cx="1200" cy="216" r="9" fill="#d4ddf4" opacity="0.6"/>
-        <circle cx="1192" cy="176" r="7" fill="#d4ddf4" opacity="0.6"/>
+        <circle class="moonglow" cx="1180" cy="200" r="250" fill="url(#moonGlow)"/>
+        <path class="moonlit" fill="#cdd6ee" d="M1180 148 A52 52 0 0 1 1180 252 A52 52 0 0 0 1180 148 Z"/>
       </g>
     </g>
     <g class="sun-pos">
@@ -633,6 +630,17 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
     return {x: leftX + frac*(rightX-leftX), y: horizonY - (horizonY-peakY)*Math.sin(Math.PI*frac)};
   }
   function setOp(sel,v){ var el = document.querySelector(sel); if(el) el.style.opacity = v.toFixed(3); }
+  function moonPhaseFrac(){ var jd = Date.now()/86400000 + 2440587.5; var p = ((jd - 2451550.1) / 29.530588853) % 1; return p < 0 ? p + 1 : p; }
+  function moonLitPath(cx, cy, R, p){
+    var f = (1 - Math.cos(2*Math.PI*p)) / 2;          // illuminated fraction (0 new, 1 full)
+    if(f < 0.02) return '';                            // new moon -> nothing visible
+    var waxing = p < 0.5;                              // lit on the right while waxing (N. hemisphere)
+    var rx = (R * Math.abs(1 - 2*f)).toFixed(2);       // terminator width: R at new/full, 0 at half
+    var top = cy - R, bot = cy + R;
+    var limb = waxing ? 1 : 0;
+    var term = waxing ? (f < 0.5 ? 1 : 0) : (f < 0.5 ? 0 : 1);
+    return 'M'+cx+' '+top+' A'+R+' '+R+' 0 0 '+limb+' '+cx+' '+bot+' A'+rx+' '+R+' 0 0 '+term+' '+cx+' '+top+' Z';
+  }
   function placeSky(){
     var t = nclHours(), sr = sunTimes.rise, ss = sunTimes.set;
     var d = dayness(t, sr, ss);
@@ -659,6 +667,10 @@ document.body.setAttribute('data-theme', (h>=7&&h<19)?'light':'dark');})();</scr
     var sunEl = document.querySelector('.sun-pos'), moonEl = document.querySelector('.moon-pos');
     if(sunEl)  sunEl.setAttribute('transform', 'translate(' + (ps.x-720).toFixed(1) + ',' + (ps.y-720).toFixed(1) + ')');
     if(moonEl) moonEl.setAttribute('transform', 'translate(' + (pm.x-1180).toFixed(1) + ',' + (pm.y-200).toFixed(1) + ')');
+    var mph = moonPhaseFrac(), mf = (1 - Math.cos(2*Math.PI*mph)) / 2;
+    var mLit = document.querySelector('.moonlit'), mGlow = document.querySelector('.moonglow');
+    if(mLit) mLit.setAttribute('d', moonLitPath(1180, 200, 52, mph)); // real phase shape, same position
+    if(mGlow) mGlow.style.opacity = mf.toFixed(3);                     // glow scales with illumination
     window.skyPos = d >= 0.5 ? ps : pm; // the plane crosses in front of whichever is up
   }
   placeSky();
